@@ -1,0 +1,46 @@
+I"ù(function() {
+  App.chat = App.cable.subscriptions.create({
+    channel: "ChatChannel"
+  }, {
+    connected: function() {
+      return console.log('connected to ChatChannel');
+    },
+    disconnected: function() {},
+    received: function(data) {
+      return console.log("Receive message " + data.message + " from ChatChannel");
+    },
+    send_message: function(message) {
+      console.log("Send message " + message + " to ChatChannel");
+      return this.perform('send_message', {
+        message: message
+      });
+    }
+  });
+
+  App.vue = new Vue({
+    el: '#gossip',
+    data: {
+      message: null,
+      messages: [
+        {
+          message: 'hello1'
+        }, {
+          message: 'hello2'
+        }
+      ]
+    },
+    methods: {
+      addMessage: function() {
+        var new_message;
+        new_message = this.message;
+        this.messages.push({
+          message: new_message
+        });
+        App.chat.send_message(new_message);
+        this.message = null;
+      }
+    }
+  });
+
+}).call(this);
+:ET

@@ -1,0 +1,46 @@
+I"/(function() {
+  var actioncable_methods;
+
+  actioncable_methods = {
+    connected: function() {
+      return console.log('connected to ChatChannel');
+    },
+    disconnected: function() {},
+    received: function(data) {
+      console.log("Receive message " + data.message + " from ChatChannel");
+      return App.vue.receiveMessage(data.message);
+    },
+    send_message: function(message) {
+      console.log("Send message " + message + " to ChatChannel");
+      return this.perform('send_message', {
+        message: message
+      });
+    }
+  };
+
+  App.chat = App.cable.subscriptions.create({
+    channel: "ChatChannel"
+  }, actioncable_methods);
+
+  App.vue = new Vue({
+    el: '#gossip',
+    data: {
+      name: 'anonymous',
+      message: null,
+      messages: []
+    },
+    methods: {
+      sendMessage: function() {
+        App.chat.send_message(this.name + ": " + this.message);
+        this.message = null;
+      },
+      receiveMessage: function(message) {
+        this.messages.push({
+          message: message
+        });
+      }
+    }
+  });
+
+}).call(this);
+:ET

@@ -1,0 +1,29 @@
+I"(function() {
+  var app;
+
+  App.chat = App.cable.subscriptions.create({
+    channel: "ChatChannel"
+  }, {
+    connected: function() {
+      return console.log('connected to ChatChannel');
+    },
+    disconnected: function() {},
+    received: function(data) {
+      return console.log(data);
+    },
+    send_message: function(message) {
+      return this.perform('send_message', {
+        message: message
+      });
+    }
+  });
+
+  App.vue = app = new Vue({
+    el: '#gossip',
+    data: {
+      messages: []
+    }
+  });
+
+}).call(this);
+:ET
